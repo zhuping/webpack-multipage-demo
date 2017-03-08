@@ -1,0 +1,154 @@
+var glob = require('glob')
+var path = require('path')
+var webpack = require('webpack')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+var CleanWebpackPlugin = require('clean-webpack-plugin')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
+
+var APP_PATH = path.resolve(__dirname, 'app')
+var BUILD_PATH = path.resolve(__dirname, 'build')
+
+// 获取当前分支版本号，分支格式为`daily/x.y.z`
+var execSync = require('child_process').execSync
+var gitBranch = execSync(`git symbolic-ref --short HEAD`).toString().trim()
+var gitVersion = gitBranch.split('/')[1] || ''
+
+var isDEV = process.env.NODE_ENV === 'development'
+
+// 获取入口js文件
+var entries = getEntry('./app/pages/**/*.js')
+var chunks = Object.keys(entries)
+
+module.exports = {
+  entry: entries,
+  output: {
+    path: BUILD_PATH,
+    publicPath: !isDEV ? gitVersion : '/build/',
+    filename: !isDEV ? '[name].[chunkhash:5].js' : '[name].js',
+    chunkFilename: !isDEV ? '[id].[chunkhash:5].js' : '[id].js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        enforce: 'pre',
+        exclude: /node_modules/,
+        loader: 'jshint-loader'
+      },
+      {
+        test: /\.vue$/,
+        loaders: 'vue-loader'
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: 'babel-loader',
+        query: {
+          presets: ['env'],
+          plugins: ['transform-runtime']
+        }
+      },
+      {
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            {
+              loader: 'css-loader',
+              options: {
+                sourceMap: true,
+                minimize: !isDEV
+              }
+            },
+            {
+              loader: 'postcss-loader',
+              options: {
+                plugins: function() {
+                  return [
+                    require('autoprefixer')
+                  ]
+                }
+              }
+            },
+            'less-loader'
+          ]
+        })
+      }
+    ]
+  },
+  devtool: '#inline-source-map',
+  devServer: {
+    contentBase: __dirname,
+    compress: true
+  },
+  resolve: {
+    extensions: ['.vue', '.js'],
+    alias: {
+      'vue$': 'vue/dist/vue.common.js'
+    }
+  },
+  plugins: [
+    new ExtractTextPlugin({
+      filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
+      allChunks: true
+    }),
+    new webpack.ProvidePlugin({
+      $: 'webpack-zepto'
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: ['vendors', 'manifest'],
+      chunks: chunks,
+      minChunks: chunks.length
+    })
+  ]
+}
+
+// 获取html页面文件
+var pages = getEntry('./app/pages/**/*.html')
+for (var pathname in pages) {
+
+  // 配置生成的 html 文件，定义路径等
+  var conf = {
+    filename: pages[pathname].substring(pages[pathname].lastIndexOf(pathname)), // html 文件输出路径
+    template: pages[pathname], // 模板路径
+    inject: true,              // js 插入位置
+    minify: {
+      removeComments: true,
+      collapseWhitespace: false
+    }
+  }
+  if (pathname in module.exports.entry) {
+    conf.chunks = ['vendors', pathname]
+    conf.hash = false
+  }
+
+  module.exports.plugins.push(new HtmlWebpackPlugin(conf))
+}
+
+// 生产环境
+if (!isDEV) {
+  module.exports.devtool = '#source-map'
+  module.exports.plugins = (module.exports.plugins || []).concat([
+    new webpack.optimize.UglifyJsPlugin({
+      sourceMap: true,
+      comments: false,
+      compress: {
+        warnings: false,
+        drop_console: true,
+      }
+    }),
+    new CleanWebpackPlugin(['build'])
+  ])
+}
+
+function getEntry(globPath) {
+  var entries = {}, basename, tmp, pathname
+
+  glob.sync(globPath).forEach(function (entry) {
+    basename = path.basename(entry, path.extname(entry))
+    tmp = entry.split('/').splice(-2)
+    pathname = tmp.splice(0, 1) + '/' + basename // 正确输出 js 和 html 的路径
+    entries[pathname] = entry
+  })
+  return entries
+}
