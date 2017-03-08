@@ -1,9 +1,11 @@
 // 文件hash缓存
 // 参考：
-// https://webpack.js.org/guides/caching/
-// https://github.com/soundcloud/chunk-manifest-webpack-plugin/issues/5
+// 1. https://webpack.js.org/guides/caching/
+// 2. https://github.com/soundcloud/chunk-manifest-webpack-plugin/issues/5
+
 // TODO：
-// build生成的文件中，除了改动的文件被修改了，不知道为什么vendors.js.map文件也被修改了？？？
+// 1. build生成的文件中，除了改动的文件被修改了，不知道为什么vendors.js.map文件也被修改了？？？
+// 2. 对css添加hash缓存，不管css有没有被修改，每次build都会被重新打包？？？
 
 var glob = require('glob')
 var path = require('path')
@@ -97,7 +99,8 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin({
-      filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
+      // filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
+      filename: '[name].css',
       allChunks: true
     }),
     new webpack.ProvidePlugin({
