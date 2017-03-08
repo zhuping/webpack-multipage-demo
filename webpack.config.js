@@ -1,3 +1,10 @@
+// 文件hash缓存
+// 参考：
+// https://webpack.js.org/guides/caching/
+// https://github.com/soundcloud/chunk-manifest-webpack-plugin/issues/5
+// TODO：
+// build生成的文件中，除了改动的文件被修改了，不知道为什么vendors.js.map文件也被修改了？？？
+
 var glob = require('glob')
 var path = require('path')
 var webpack = require('webpack')
@@ -90,7 +97,7 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin({
-      filename: '[name].css',
+      filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
       allChunks: true
     }),
     new webpack.ProvidePlugin({
