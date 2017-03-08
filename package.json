@@ -11,7 +11,6 @@
   "dependencies": {
     "fastclick": "^1.0.6",
     "vue": "^2.2.1",
-    "vue-router": "^2.3.0",
     "webpack-zepto": "^0.0.1"
   },
   "devDependencies": {
@@ -20,6 +19,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.2.1",
     "babel-runtime": "^6.23.0",
+    "chunk-manifest-webpack-plugin": "^1.0.0",
     "clean-webpack-plugin": "^0.1.15",
     "cross-env": "^3.2.3",
     "css-loader": "^0.26.2",
@@ -34,6 +34,7 @@
     "vue-loader": "^11.1.4",
     "vue-template-compiler": "^2.2.1",
     "webpack": "^2.2.1",
+    "webpack-chunk-hash": "^0.4.0",
     "webpack-dev-server": "^2.4.1"
   }
 }

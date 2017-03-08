@@ -2,16 +2,17 @@ var glob = require('glob')
 var path = require('path')
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
-var CleanWebpackPlugin = require('clean-webpack-plugin')
+// var CleanWebpackPlugin = require('clean-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
-
-var APP_PATH = path.resolve(__dirname, 'app')
-var BUILD_PATH = path.resolve(__dirname, 'build')
+var ChunkManifestPlugin = require('chunk-manifest-webpack-plugin')
+var WebpackChunkHash = require("webpack-chunk-hash")
 
 // 获取当前分支版本号，分支格式为`daily/x.y.z`
 var execSync = require('child_process').execSync
 var gitBranch = execSync(`git symbolic-ref --short HEAD`).toString().trim()
 var gitVersion = gitBranch.split('/')[1] || ''
+
+var BUILD_PATH = path.resolve(__dirname, 'build')
 
 var isDEV = process.env.NODE_ENV === 'development'
 
@@ -89,7 +90,7 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin({
-      filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
+      filename: '[name].css',
       allChunks: true
     }),
     new webpack.ProvidePlugin({
@@ -137,7 +138,13 @@ if (!isDEV) {
         drop_console: true,
       }
     }),
-    new CleanWebpackPlugin(['build'])
+    new webpack.HashedModuleIdsPlugin(),
+    new WebpackChunkHash(),
+    new ChunkManifestPlugin({
+      filename: 'manifest.json',
+      manifestVariable: 'webpackManifest'
+    }),
+    // new CleanWebpackPlugin(['build'])
   ])
 }
 
