@@ -2,7 +2,7 @@ var glob = require('glob')
 var path = require('path')
 var webpack = require('webpack')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
-// var CleanWebpackPlugin = require('clean-webpack-plugin')
+var CleanWebpackPlugin = require('clean-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var ChunkManifestPlugin = require('chunk-manifest-webpack-plugin')
 var WebpackChunkHash = require("webpack-chunk-hash")
@@ -141,10 +141,10 @@ if (!isDEV) {
     new webpack.HashedModuleIdsPlugin(),
     new WebpackChunkHash(),
     new ChunkManifestPlugin({
-      filename: 'manifest.json',
+      filename: '../manifest.json',
       manifestVariable: 'webpackManifest'
     }),
-    // new CleanWebpackPlugin(['build'])
+    new CleanWebpackPlugin(['build'])
   ])
 }
 
