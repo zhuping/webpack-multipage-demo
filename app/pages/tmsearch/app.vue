@@ -10,7 +10,7 @@
 <script>
   export default {
     methods: {
-      clickMe: function() {
+      clickMe: function(event) {
         alert(2)
       }
     }

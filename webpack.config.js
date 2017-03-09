@@ -57,7 +57,7 @@ module.exports = {
                 {
                   loader: 'css-loader',
                   options: {
-                    sourceMap: true,
+                    sourceMap: isDEV ? true : false,
                     minimize: !isDEV
                   }
                 }, 
@@ -84,7 +84,7 @@ module.exports = {
             {
               loader: 'css-loader',
               options: {
-                sourceMap: true,
+                sourceMap: isDEV ? true : false,
                 minimize: !isDEV
               }
             },
@@ -117,8 +117,8 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin({
-      filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
-      // filename: '[name].css',
+      // filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
+      filename: '[name].css',
       allChunks: true
     }),
     new webpack.ProvidePlugin({
