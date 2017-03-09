@@ -2,7 +2,6 @@ import Vue from 'vue'
 import FastClick from 'fastclick'
 import App from './app'
 
-require('../../assets/common.less')
 require('../../assets/tmsearch.less')
 
 FastClick.attach(document.body)

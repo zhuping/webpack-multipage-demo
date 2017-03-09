@@ -47,7 +47,25 @@ module.exports = {
       },
       {
         test: /\.vue$/,
-        loaders: 'vue-loader'
+        loaders: 'vue-loader',
+        options: {
+          postcss: [require('postcss-cssnext')()],
+          loaders: {
+            css: ExtractTextPlugin.extract({
+              fallback: 'vue-style-loader',
+              use: [
+                {
+                  loader: 'css-loader',
+                  options: {
+                    sourceMap: true,
+                    minimize: !isDEV
+                  }
+                }, 
+                'less-loader'
+              ]
+            })
+          }
+        }
       },
       {
         test: /\.js$/,
