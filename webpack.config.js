@@ -117,8 +117,8 @@ module.exports = {
   },
   plugins: [
     new ExtractTextPlugin({
-      // filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
-      filename: '[name].css',
+      filename: !isDEV ? '[name].[chunkhash:5].css' : '[name].css',
+      // filename: '[name].css',
       allChunks: true
     }),
     new webpack.ProvidePlugin({

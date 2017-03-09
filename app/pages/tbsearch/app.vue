@@ -8,6 +8,11 @@
 </template>
 
 <script>
-  import Dialog from '../../components/dialog'
-
+  export default {
+    methods: {
+      clickMe: function() {
+        alert(1)
+      }
+    }
+  }
 </script>
