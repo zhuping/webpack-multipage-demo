@@ -141,8 +141,7 @@ for (var pathname in pages) {
     template: pages[pathname], // 模板路径
     inject: true,              // js 插入位置
     minify: {
-      removeComments: true,
-      collapseWhitespace: false
+      removeComments: true
     }
   }
   if (pathname in module.exports.entry) {
