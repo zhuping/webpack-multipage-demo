@@ -19,7 +19,10 @@ var WebpackChunkHash = require("webpack-chunk-hash")
 // 获取当前分支版本号，分支格式为`daily/x.y.z`
 var execSync = require('child_process').execSync
 var gitBranch = execSync(`git symbolic-ref --short HEAD`).toString().trim()
-var gitVersion = gitBranch.split('/')[1] || ''
+var gitVersion = gitBranch.split('/')[1] || '0.0.1'
+
+// 项目cdn地址
+var cdnPath = '//g.alicdn.com/mm/sem-bp/' + gitVersion + '/'
 
 var BUILD_PATH = path.resolve(__dirname, 'build')
 
@@ -33,9 +36,9 @@ module.exports = {
   entry: entries,
   output: {
     path: BUILD_PATH,
-    publicPath: !isDEV ? gitVersion : '/build/',
-    filename: !isDEV ? '[name].[chunkhash:5].js' : '[name].js',
-    chunkFilename: !isDEV ? '[id].[chunkhash:5].js' : '[id].js'
+    publicPath: isDEV ? '/build/' : cdnPath,
+    filename: isDEV ? '[name].js' : '[name].[chunkhash:5].js',
+    chunkFilename: isDEV ? '[id].js' : '[id].[chunkhash:5].js'
   },
   module: {
     rules: [
@@ -146,7 +149,12 @@ for (var pathname in pages) {
   }
   if (pathname in module.exports.entry) {
     conf.chunks = ['vendors', pathname]
-    conf.hash = false
+
+    // 发现.vue文件中写入JavaScript代码后，导致index在前，vendors在后
+    // 保证被插入的js中vendors始终在index前面
+    conf.chunksSortMode = function(a, b) {
+      return a.names[0] > b.names[0] ? -1 : (a.names[0] < b.names[0] ? 1 : 0)
+    }
   }
 
   module.exports.plugins.push(new HtmlWebpackPlugin(conf))
