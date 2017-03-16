@@ -21,7 +21,7 @@ var execSync = require('child_process').execSync
 var gitBranch = execSync(`git symbolic-ref --short HEAD`).toString().trim()
 var gitVersion = gitBranch.split('/')[1] || '0.0.1'
 
-// 项目cdn地址
+// 配置项目cdn地址
 var cdnPath = '//g.alicdn.com/mm/sem-bp/' + gitVersion + '/'
 
 var BUILD_PATH = path.resolve(__dirname, 'build')
@@ -73,11 +73,7 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader',
-        query: {
-          presets: ['env'],
-          plugins: ['transform-runtime']
-        }
+        loader: 'babel-loader'
       },
       {
         test: /\.less$/,
