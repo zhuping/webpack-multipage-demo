@@ -1,0 +1,14 @@
+{
+  "root": true,
+  "extends": "standard",
+  "plugins": [
+    "html"
+  ],
+  "rules": {
+    "arrow-parens": 0,
+    "no-new": 0,
+    "eol-last": 0,
+    "space-before-function-paren": 0,
+    "no-useless-escape": 0
+  }
+}

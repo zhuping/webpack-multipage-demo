@@ -43,10 +43,16 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
         enforce: 'pre',
-        exclude: /node_modules/,
-        loader: 'jshint-loader'
+        test: /\.js$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
+      },
+      {
+        enforce: 'pre',
+        test: /.vue$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
       },
       {
         test: /\.vue$/,
