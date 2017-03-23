@@ -52,7 +52,7 @@ module.exports = {
         test: /\.vue$/,
         loaders: 'vue-loader',
         options: {
-          postcss: [require('postcss-cssnext')()],
+          postcss: [require('autoprefixer')()],
           loaders: {
             css: ExtractTextPlugin.extract({
               fallback: 'vue-style-loader',
